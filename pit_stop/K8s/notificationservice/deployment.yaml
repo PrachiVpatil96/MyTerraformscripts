@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificationservice
+  annotations:
+    kubernetes.io/change-cause: 'FirstVersion'
+spec:
+  minReadySeconds: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+  template:
+    metadata:
+      labels: 
+        app: notification-service
+
+    spec:
+      containers:
+        - image: pitstop/notificationservice:1.0
+          name: notificationservice
+          env:
+            - name: DOTNET_ENVIRONMENT
+              value: Production
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 250m
+
+
+      
+
+
+
