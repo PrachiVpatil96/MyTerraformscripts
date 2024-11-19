@@ -31,6 +31,9 @@ spec:
                 mountPath: /var/lib/rabbitmq
               - name: rabbitmq-config
                 mountPath: /etc/pitstop
+      
+      namespace: 
+        name: pitstop-namespace
         volumes: 
         - name: rabbitmq-data
           emptyDir: {} # Replace with a PersistentVolumeClaim for persistent storage
