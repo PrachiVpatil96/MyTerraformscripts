@@ -56,13 +56,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: pitstop-namespace
   name: rabbitmq-svc
 spec:
   type: NodePort
   ports:
-    - targetPort: 15672
+    - name: management-port 
+      targetPort: 15672
       port: 15672
       nodePort: 30001 
-    - targetPort: 5672
+    - name: amqp-port  
+      targetPort: 5672
       port: 5672
       nodePort: 30002 
