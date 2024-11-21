@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: pitstop-namespace
+  name: sql-server
+  labels:
+    app: sql-server
+spec:
+  minReadySeconds: 5
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sql-server
+  serviceName: sqlserver-svc
+  template:
+    metadata:
+      labels:
+        app: sql-server
+    spec:
+      containers:
+        - name:  sqlserver
+          image: mcr.microsoft.com/azure-sql-edge
+          ports:
+            - containerPort: 1433
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: sqlserver-config
+          volumeMounts:
+            - name: sqlserverdata
+              mountPath: /var/opt/mssql
+           
+              
+  volumeClaimTemplates:
+    - metadata:
+        name: sqlserverdata
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: pitstop-namespace
+  name: sqlserver-svc
+spec:
+  type: NodePort
+  ports:
+    - name: management-port 
+      targetPort: 1433
+      port: 1433
+      nodePort: 30003
+  selector:
+    app: sql-server
+    
