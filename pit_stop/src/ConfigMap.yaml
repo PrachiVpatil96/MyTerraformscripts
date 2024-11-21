@@ -4,7 +4,4 @@ kind: ConfigMap
 metadata:
   name: rabbitmq-config
 data:
-  rabbitmq.conf: |
-    # RabbitMQ configuration content
-    listeners.tcp.default = 5672
-    management.tcp.port = 15672
+  RABBITMQ_CONFIG_FILE = /etc/pitstop/rabbitmq.conf
