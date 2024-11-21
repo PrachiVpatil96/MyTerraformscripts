@@ -2,6 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  namespace: pitstop-namespace
   name: rabbitmq
   labels:
     app: rabbitmq
@@ -38,15 +39,30 @@ spec:
     - metadata:
         name: rabbitmqdata
       spec:
-        accessModes: ReadWriteOnce
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 1Gi
     - metadata:
         name: rabbitmq-config
       spec:
-        accessModes: ReadWriteOnce
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 1Gi
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-svc
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 15672
+      port: 15672
+      nodePort: 30001 
+    - targetPort: 5672
+      port: 5672
+      nodePort: 30002 
