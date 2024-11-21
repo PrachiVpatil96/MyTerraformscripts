@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice
+  namespace: pitstop-namespace
+  labels:
+    app: invoice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: invoice
+  template:
+    metadata:
+      labels:
+        app: invoice
+    spec:
+      containers:
+        - name: invoiceservice
+          image: pitstop/invoiceservice:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DOTNET_ENVIRONMENT
+              value: "Production"
+            # Add environment variables for dependent services
+            - name: RABBITMQ_HOST
+              value: "rabbitmq-svc"
+            - name: SQLSERVER_HOST
+              value: "sqlserver-svc"
+            - name: MAILSERVER_HOST
+              value: "mail-svc"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: pitstop-namespace
+  name: invoice-svc
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30006  # Adjust if needed to avoid port conflicts
+  selector:
+    app: invoice
+
