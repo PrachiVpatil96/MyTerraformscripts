@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: invoiceservice
-          image: pitstop/invoiceservice:1.0
+          image: dhillevajja/pitstop-invoiceservice:1.0
           ports:
             - containerPort: 8080
           env:
